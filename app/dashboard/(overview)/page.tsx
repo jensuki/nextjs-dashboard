@@ -8,7 +8,7 @@ import { lusitana } from '@/app/ui/fonts';
 // use suspense to stream certain components since it slows down the whole page
 import { Suspense } from 'react';
 // and its fallback while waiting
-import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
+import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
 
 export default async function Page() {
 
