@@ -3,6 +3,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 // to update the url with search params + then update the url
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+// to debounce the search input
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function Search({ placeholder }: { placeholder: string }) {
   // call use search params + pathname + router
@@ -10,8 +12,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  // add onchange listener to input that will invoke handleSearch whenever input value changes
-  function handleSearch(term: string) {
+  // add debounced onchange listener to input that will invoke handleSearch whenever input value changes
+  const handleSearch = useDebouncedCallback((term) => {
     console.log(`Searching...${term}`)
     const params = new URLSearchParams(searchParams);
     // set params string based on users input, if input empty -> delete it
@@ -22,7 +24,8 @@ export default function Search({ placeholder }: { placeholder: string }) {
     }
     // for example: pathname = /dashboard/invoices, params.toString() = ?query=lee
     replace(`${pathname}?${params.toString()}`);
-  }
+  }, 300);
+
   return (
     <div className="relative flex flex-1 flex-shrink-0">
       <label htmlFor="search" className="sr-only">
