@@ -1,0 +1,43 @@
+'use server';
+
+// to handle type validation for form inputs
+import { z } from 'zod';
+// revalidate the path so next request gets updated data
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import postgres from 'postgres';
+// import for sql querying
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+
+// define schema that matches shape of form object
+// this will validate the formData before saving it to a database
+const FormSchema = z.object({
+    id: z.string(),
+    customerId: z.string(),
+    amount: z.coerce.number(),
+    status: z.enum(['pending', 'paid']),
+    date: z.string()
+});
+
+const CreateInvoice = FormSchema.omit({ id: true, date: true });
+
+export async function createInvoice(formData: FormData) {
+    // pass form data to validate the types
+    const { customerId, amount, status } = CreateInvoice.parse({
+        customerId: formData.get('customerId'),
+        amount: formData.get('amount'),
+        status: formData.get('status')
+    });
+    const amountInCents = amount * 100; // eliminate floating point errors
+    const date = new Date().toISOString().split('T')[0];
+
+    // create sql query to insert new invoice into db
+    await sql`
+        INSERT INTO invoices (customer_id, amount, status, date)
+        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+    `;
+
+    revalidatePath('/dashboard/invoices');
+    // after revalidating path with updated data, redirect user back to invoices
+    redirect('/dashboard/invoices');
+}
