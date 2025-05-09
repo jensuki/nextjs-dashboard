@@ -2,18 +2,17 @@
 
 import { Card } from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
-import LatestInvoices from '../../ui/dashboard/latest-invoices';
+import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
-// to fetch all data, import it from data.ts then call it inside component
-import { fetchLatestInvoices, fetchCardData } from '@/app/lib/data';
-// use suspense to stream only fetchrevenue since it slows down the whole page
+// to fetch card data, import it from data.ts then call it inside component
+import { fetchCardData } from '@/app/lib/data';
+// use suspense to stream certain components since it slows down the whole page
 import { Suspense } from 'react';
 // and its fallback while waiting
-import { RevenueChartSkeleton } from '@/app/ui/skeletons';
+import { RevenueChartSkeleton, LatestInvoicesSkeleton } from '@/app/ui/skeletons';
 
 export default async function Page() {
 
-    const latestInvoices = await fetchLatestInvoices(); // from Neon
     const {
         numberOfInvoices,
         numberOfCustomers,
@@ -37,7 +36,9 @@ export default async function Page() {
                 <Suspense fallback={<RevenueChartSkeleton />}>
                     <RevenueChart />
                 </Suspense>
-                <LatestInvoices latestInvoices={latestInvoices} />
+                <Suspense fallback={<LatestInvoicesSkeleton />}>
+                    <LatestInvoices />
+                </Suspense>
             </div>
         </main>
     )
