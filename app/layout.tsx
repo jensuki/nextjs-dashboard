@@ -1,3 +1,8 @@
+// add global.css to top level component (this root layout)
+import '@/app/ui/global.css';
+// add inter font from fonts.js to the <body> in /app/layout.tsx
+import { inter } from '@/app/ui/fonts';
+
 export default function RootLayout({
   children,
 }: {
@@ -5,7 +10,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   );
 }
