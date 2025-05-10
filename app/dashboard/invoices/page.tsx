@@ -7,6 +7,11 @@ import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 // fetch invoices data on the server as pass to component as a prop
 import { fetchInvoicesPages } from '@/app/lib/data';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Invoices'
+}
 
 // page components accept searchParams props to pass current URL params to <Table> component
 export default async function Page(props: {
